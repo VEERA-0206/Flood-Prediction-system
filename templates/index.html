@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}FloodGuard | Educational Portal{% endblock %}
+
+{% block content %}
+<div class="landing-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Understanding The Deluge</h1>
+        <p class="hero-subtitle">Before we can predict the future, we must understand the past. Explore the history, geography, and engineering of global floods.</p>
+        <p style="color: var(--primary); font-weight: 600; margin-bottom: 1rem; font-family: 'Outfit', sans-serif;">Ensure your region's safety today.</p>
+        <a href="{{ url_for('predict_page') }}" class="btn-primary">Launch Risk Assessment</a>
+    </div>
+</div>
+
+<div class="educational-container">
+    <section class="edu-section">
+        <div class="section-header">
+            <h2>Major Historical Disasters</h2>
+            <div class="header-line"></div>
+            <p style="color: var(--text-muted); margin-top: 1rem; max-width: 700px;">A look back at some of the most devastating floods in recorded history, highlighting the critical need for advanced prediction systems.</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="{{ url_for('dashboard') }}" class="btn-primary" style="background: transparent; border: 2px solid var(--primary); box-shadow: none;">Explore Dark Events</a>
+        </div>
+    </section>
+
+    <section class="edu-section">
+        <div class="section-header">
+            <h2>Engineering Marvels</h2>
+            <div class="header-line"></div>
+            <p style="color: var(--text-muted); margin-top: 1rem; max-width: 700px;">Humanity's greatest infrastructural achievements designed to hold back the tides and protect millions of lives.</p>
+        </div>
+        <div class="marvels-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+            
+            <div class="glass-card marvel-card">
+                <div class="marvel-icon" style="margin-bottom: 1rem;">
+                    <img src="https://flagcdn.com/nl.svg" alt="Netherlands Flag" style="width: 40px; height: auto; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+                </div>
+                <div class="marvel-content">
+                    <h3>The Delta Works (The Netherlands)</h3>
+                    <p>A massive series of dams, sluices, and storm surge barriers built after the 1953 North Sea flood. It is recognized as one of the Seven Wonders of the Modern World by civil engineers, protecting a country where 26% of land is below sea level.</p>
+                </div>
+            </div>
+            
+            <div class="glass-card marvel-card">
+                <div class="marvel-icon" style="margin-bottom: 1rem;">
+                    <img src="https://flagcdn.com/jp.svg" alt="Japan Flag" style="width: 40px; height: auto; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+                </div>
+                <div class="marvel-content">
+                    <h3>G-Cans Project (Japan)</h3>
+                    <p>The Metropolitan Area Outer Underground Discharge Channel is the world's largest underground flood water diversion facility. Built to protect Tokyo, it features 59 massive pillars and turbine pumps to shoot floodwater into the Edo River.</p>
+                </div>
+            </div>
+
+            <div class="glass-card marvel-card">
+                <div class="marvel-icon" style="margin-bottom: 1rem;">
+                    <img src="https://flagcdn.com/it.svg" alt="Italy Flag" style="width: 40px; height: auto; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+                </div>
+                <div class="marvel-content">
+                    <h3>The MOSE Project (Italy)</h3>
+                    <p>An integrated system consisting of rows of mobile gates installed at the Lido, Malamocco, and Chioggia inlets. These massive yellow barriers temporarily isolate the Venetian Lagoon from the Adriatic Sea to protect Venice from flooding.</p>
+                </div>
+            </div>
+
+            <div class="glass-card marvel-card">
+                <div class="marvel-icon" style="margin-bottom: 1rem;">
+                    <img src="https://flagcdn.com/gb.svg" alt="United Kingdom Flag" style="width: 40px; height: auto; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+                </div>
+                <div class="marvel-content">
+                    <h3>Thames Barrier (United Kingdom)</h3>
+                    <p>One of the largest movable flood barriers in the world, spanning the River Thames. Its distinctive silver steel-clad structures protect Greater London from exceptionally high tides and storm surges moving up from the North Sea.</p>
+                </div>
+            </div>
+
+            <div class="glass-card marvel-card">
+                <div class="marvel-icon" style="margin-bottom: 1rem;">
+                    <img src="https://flagcdn.com/my.svg" alt="Malaysia Flag" style="width: 40px; height: auto; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+                </div>
+                <div class="marvel-content">
+                    <h3>SMART Tunnel (Malaysia)</h3>
+                    <p>The Stormwater Management and Road Tunnel in Kuala Lumpur is an ingenious multi-purpose mega-structure. During dry weather, it operates as a highway toll road, but during extreme monsoons, the tunnel is evacuated of cars and used entirely to divert floodwaters.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+{% endblock %}

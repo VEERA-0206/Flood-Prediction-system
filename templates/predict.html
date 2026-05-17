@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}FloodGuard | Risk Assessment{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="glass-card">
+        <header>
+            <h1>Risk Assessment</h1>
+            <p class="subtitle">Next-generation flood prediction using advanced machine learning</p>
+        </header>
+
+        <form id="predict-form">
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="step-num">1</span>
+                    <h2>Select Location</h2>
+                </div>
+                <div id="map-container">
+                    <div id="map"></div>
+                    <p class="map-hint">Pin a location: AI will auto-fetch environmental data & analyze risk instantly</p>
+                </div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="Latitude">Latitude</label>
+                        <input type="number" step="any" id="Latitude" name="Latitude" placeholder="0.0000" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="Longitude">Longitude</label>
+                        <input type="number" step="any" id="Longitude" name="Longitude" placeholder="0.0000" required>
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="step-num">2</span>
+                    <h2>Environmental Details</h2>
+                </div>
+                <div class="input-grid" style="opacity: 0.7;">
+                    {% for feature in features %}
+                    {% if feature not in ['Latitude', 'Longitude'] %}
+                    <div class="input-group">
+                        <label for="{{ feature }}">{{ feature }}</label>
+                        <input type="number" step="any" id="{{ feature }}" name="{{ feature }}" placeholder="Awaiting Fetch..." readonly>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
+
+            <button type="submit" id="submit-btn">Generate Risk Analysis</button>
+        </form>
+
+        <div id="result-container">
+            <div class="result-card">
+                <div id="result-text" class="result-val">---</div>
+                <p id="prob-text" style="color: var(--text-muted)">Risk Level: 0%</p>
+                <div class="prob-bar-bg">
+                    <div id="prob-bar" class="prob-bar-fill"></div>
+                </div>
+                <div class="transparency-note">
+                    <h3>Transparency Report</h3>
+                    <p><strong>Elevation & Rainfall:</strong> Real-time satellite data from Open-Meteo API.</p>
+                    <p><strong>Terrain (Slope/Dist):</strong> Estimated from historical nearest-neighbor data.</p>
+                    <p><strong>Prediction:</strong> Based on historical flood patterns (1900-2022).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

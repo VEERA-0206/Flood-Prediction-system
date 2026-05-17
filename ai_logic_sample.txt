@@ -1,0 +1,44 @@
+--- AI Logic Breakdown: Inside Tree #0 ---
+|--- time <= 1966.50
+|   |--- Rainfall <= 1275.21
+|   |   |--- Longitude <= 49.92
+|   |   |   |--- Rainfall <= 1067.09
+|   |   |   |   |--- truncated branch of depth 10
+|   |   |   |--- Rainfall >  1067.09
+|   |   |   |   |--- class: 1.0
+|   |   |--- Longitude >  49.92
+|   |   |   |--- Elevation <= 244.50
+|   |   |   |   |--- truncated branch of depth 6
+|   |   |   |--- Elevation >  244.50
+|   |   |   |   |--- truncated branch of depth 3
+|   |--- Rainfall >  1275.21
+|   |   |--- Elevation <= 76.50
+|   |   |   |--- Slope <= 4.46
+|   |   |   |   |--- truncated branch of depth 6
+|   |   |   |--- Slope >  4.46
+|   |   |   |   |--- class: 1.0
+|   |   |--- Elevation >  76.50
+|   |   |   |--- Elevation <= 2705.00
+|   |   |   |   |--- class: 1.0
+|   |   |   |--- Elevation >  2705.00
+|   |   |   |   |--- truncated branch of depth 2
+|--- time >  1966.50
+|   |--- Elevation <= 0.50
+|   |   |--- Rainfall <= 68.80
+|   |   |   |--- class: 0.0
+|   |   |--- Rainfall >  68.80
+|   |   |   |--- Slope <= 0.46
+|   |   |   |   |--- truncated branch of depth 12
+|   |   |   |--- Slope >  0.46
+|   |   |   |   |--- truncated branch of depth 3
+|   |--- Elevation >  0.50
+|   |   |--- Rainfall <= 2.23
+|   |   |   |--- time <= 2001.50
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- time >  2001.50
+|   |   |   |   |--- truncated branch of depth 2
+|   |   |--- Rainfall >  2.23
+|   |   |   |--- Elevation <= 1048.00
+|   |   |   |   |--- truncated branch of depth 27
+|   |   |   |--- Elevation >  1048.00
+|   |   |   |   |--- truncated branch of depth 19

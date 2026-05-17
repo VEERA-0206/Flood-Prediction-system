@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}FloodGuard | Admin Control{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="glass-card">
+        <header>
+            <h1>Admin Control Panel</h1>
+            <p class="subtitle">Update datasets and trigger AI retraining</p>
+        </header>
+
+        {% if message %}
+        <div class="transparency-note" style="border-left-color: var(--success); margin-bottom: 2rem;">
+            <h3>Success</h3>
+            <p>{{ message }}</p>
+        </div>
+        {% endif %}
+        
+        {% if error %}
+        <div class="transparency-note" style="border-left-color: var(--danger); margin-bottom: 2rem;">
+            <h3>Error</h3>
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+
+        <section class="form-section">
+            <div class="section-header">
+                <span class="step-num">!</span>
+                <h2>Dataset Management</h2>
+            </div>
+            
+            <form action="{{ url_for('admin') }}" method="POST" enctype="multipart/form-data">
+                <div class="input-group" style="margin-bottom: 1.5rem;">
+                    <label for="dataset">Upload New Dataset (.csv or .xls)</label>
+                    <input type="file" id="dataset" name="dataset" accept=".csv, .xls, .xlsx" required style="padding: 1.5rem; background: rgba(0,0,0,0.4);">
+                    <p class="map-hint" style="position: static; margin-top: 5px;">Uploading a valid dataset will automatically trigger the Random Forest retraining sequence.</p>
+                </div>
+                
+                <button type="submit" style="background: linear-gradient(135deg, var(--danger), #b91c1c);">Upload & Retrain AI Model</button>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}
