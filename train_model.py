@@ -8,7 +8,7 @@ import os
 
 def train_flood_model():
     # 1. Load Data
-    file_path = 'flood_dataset_classification.xls'
+    file_path = 'datasets/flood_dataset_classification.xls'
     print(f"Reading dataset from {file_path}...")
 
     # The file is actually a CSV
@@ -41,7 +41,15 @@ def train_flood_model():
     joblib.dump(model, model_save_path)
     joblib.dump(features, 'model_features.pkl')
     
-    return f"Model successfully retrained! New Accuracy: {acc:.2%}"
+    import json
+    metrics = {
+        'accuracy': float(acc),
+        'rows': len(df_clean)
+    }
+    with open('model_metrics.json', 'w') as f:
+        json.dump(metrics, f)
+    
+    return f"Model successfully retrained! New Accuracy: {acc:.2%} on {len(df_clean)} rows."
 
 if __name__ == '__main__':
     print(train_flood_model())
