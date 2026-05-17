@@ -13,15 +13,22 @@ model_path = 'flood_model_fixed.pkl'
 features_path = 'model_features.pkl'
 
 def load_resources():
-    global model, features, df_full
+    global model, features, df_full, model_metrics
+    import json
     if os.path.exists(model_path):
         model = joblib.load(model_path)
         features = joblib.load(features_path)
-        df_full = pd.read_csv('flood_dataset_classification.xls')
+        df_full = pd.read_csv('datasets/flood_dataset_classification.xls')
+        try:
+            with open('model_metrics.json', 'r') as f:
+                model_metrics = json.load(f)
+        except:
+            model_metrics = {'accuracy': 0.0, 'rows': len(df_full)}
     else:
         model = None
         features = []
         df_full = None
+        model_metrics = None
 
 load_resources()
 
@@ -51,9 +58,10 @@ def admin():
             elif file:
                 try:
                     # Save the uploaded file
-                    file.save('flood_dataset_classification.xls')
+                    file.save('datasets/flood_dataset_classification.xls')
                     
                     # Trigger retraining
+                    from train_model import train_flood_model
                     message = train_flood_model()
                     
                     # Reload the model into memory
@@ -61,7 +69,18 @@ def admin():
                 except Exception as e:
                     error = f"Error during retraining: {str(e)}"
                     
-    return render_template('admin.html', message=message, error=error)
+    feature_importances = []
+    feature_names = []
+    if model is not None:
+        feature_importances = list(model.feature_importances_)
+        feature_names = list(features)
+        
+    return render_template('admin.html', 
+                           message=message, 
+                           error=error, 
+                           metrics=model_metrics, 
+                           feature_names=feature_names, 
+                           feature_importances=feature_importances)
 
 @app.route('/get_features', methods=['POST'])
 def get_features():
@@ -87,13 +106,13 @@ def get_features():
         try:
             elev_resp = requests.get(elev_url, timeout=5).json()
             elevation = float(elev_resp.get('elevation', [0])[0])
-            api_log["elevation"] = f"{elevation}m (Source: Open-Meteo)"
+            api_log["elevation"] = f"{elevation}m"
             
             weather_resp = requests.get(weather_url, timeout=5).json()
             rainfall = float(weather_resp.get('current_weather', {}).get('precipitation', 0))
             if rainfall == 0 and 'hourly' in weather_resp:
                 rainfall = float(weather_resp['hourly']['precipitation'][0])
-            api_log["rainfall"] = f"{rainfall}mm (Source: Open-Meteo)"
+            api_log["rainfall"] = f"{rainfall}mm"
         except Exception as e:
             api_log["error"] = str(e)
             # Fallback ONLY if API fails completely
