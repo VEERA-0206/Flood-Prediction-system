@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}FloodGuard | Admin Login{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin-top: 5vh;">
+    <div class="glass-card" style="text-align: center; padding: 3rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🔐</div>
+        <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--danger), #fca5a5); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Admin Access</h1>
+        <p class="subtitle" style="margin-bottom: 2rem;">Please enter your master credentials.</p>
+
+        {% if error %}
+        <div class="transparency-note" style="border-left-color: var(--danger); margin-bottom: 2rem; padding: 1rem; text-align: center;">
+            <p style="color: var(--danger); font-weight: 600; margin: 0;">{{ error }}</p>
+        </div>
+        {% endif %}
+
+        <form action="{{ url_for('login') }}" method="POST" style="text-align: left;">
+            <div class="input-group" style="margin-bottom: 1.5rem;">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autofocus placeholder="Enter admin username" style="width: 100%; box-sizing: border-box;">
+            </div>
+            
+            <div class="input-group" style="margin-bottom: 2rem;">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter master password" style="width: 100%; box-sizing: border-box;">
+            </div>
+            
+            <button type="submit" style="background: linear-gradient(135deg, var(--danger), #b91c1c); box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4);">Authenticate & Enter</button>
+        </form>
+        
+        <div style="margin-top: 2rem;">
+            <a href="{{ url_for('role_selection') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">&larr; Return to Role Selection</a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Override default input focus for admin theme */
+input:focus {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15), inset 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+</style>
+{% endblock %}
