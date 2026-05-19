@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}FloodGuard | Select Role{% endblock %}
+
+{% block content %}
+<div class="landing-hero" style="min-height: 80vh;">
+    <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: 1rem;">Welcome to FloodGuard AI</h1>
+    <p class="hero-subtitle" style="margin-bottom: 4rem;">Please select your access portal to continue.</p>
+
+    <div class="cards-grid" style="max-width: 900px; width: 100%; margin: 0 auto; gap: 3rem;">
+        
+        <!-- User Portal Card -->
+        <div class="glass-card info-card" style="text-align: center; padding: 4rem 2.5rem; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden;" onclick="window.location.href='{{ url_for('home') }}'">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem;">🌍</div>
+            <h3 style="font-size: 2rem; color: var(--text-main); margin-bottom: 1rem;">Public Access</h3>
+            <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">Explore historical flood data, view engineering marvels, and run AI risk assessments for your region.</p>
+            <span class="btn-primary" style="display: inline-block; width: 100%; box-sizing: border-box; font-size: 1.1rem;">Enter as User</span>
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #22d3ee, #818cf8);"></div>
+        </div>
+
+        <!-- Admin Portal Card -->
+        <div class="glass-card info-card" style="text-align: center; padding: 4rem 2.5rem; transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; background: rgba(11, 17, 32, 0.8);" onclick="window.location.href='{{ url_for('login') }}'">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem;">🔐</div>
+            <h3 style="font-size: 2rem; color: var(--danger); margin-bottom: 1rem;">Command Center</h3>
+            <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">Restricted access for system administrators. Manage datasets, monitor model health, and retrain the AI.</p>
+            <span class="btn-primary" style="display: inline-block; width: 100%; box-sizing: border-box; font-size: 1.1rem; background: linear-gradient(135deg, var(--danger), #b91c1c); box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4);">Admin Login</span>
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ef4444, #b91c1c);"></div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.info-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(255,255,255,0.3);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+}
+</style>
+{% endblock %}

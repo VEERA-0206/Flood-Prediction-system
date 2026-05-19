@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}FloodGuard | Educational Portal{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=5">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
@@ -20,12 +20,15 @@
     <div class="blob blob-2"></div>
 
     <nav class="navbar">
-        <div class="nav-brand">FloodGuard AI</div>
+        <a href="{{ url_for('home') }}" class="nav-brand" style="text-decoration: none;">FloodGuard AI</a>
         <ul class="nav-links">
-            <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a></li>
+            <li><a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a></li>
             <li><a href="{{ url_for('predict_page') }}" class="{% if request.endpoint == 'predict_page' %}active{% endif %}">Risk Assessment</a></li>
             <li><a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Historical Archives</a></li>
             <li><a href="{{ url_for('admin') }}" class="{% if request.endpoint == 'admin' %}active{% endif %}">Admin</a></li>
+            {% if session.get('logged_in') %}
+            <li><a href="{{ url_for('logout') }}" style="color: var(--danger); font-weight: 700;">Logout</a></li>
+            {% endif %}
         </ul>
     </nav>
 

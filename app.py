@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from functools import wraps
 import joblib
 import pandas as pd
 import os
@@ -7,6 +8,15 @@ from datetime import datetime
 from train_model import train_flood_model
 
 app = Flask(__name__)
+app.secret_key = 'master_admin_secret_key_123'
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in'):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Load model and features
 model_path = 'flood_model_fixed.pkl'
@@ -18,7 +28,11 @@ def load_resources():
     if os.path.exists(model_path):
         model = joblib.load(model_path)
         features = joblib.load(features_path)
-        df_full = pd.read_csv('datasets/flood_dataset_classification.xls')
+        try:
+            df_full = pd.read_csv('datasets/active_training_data.csv')
+        except FileNotFoundError:
+            # Fallback if no active dataset has been uploaded yet
+            df_full = pd.read_csv('datasets/flood_dataset_classification.xls')
         try:
             with open('model_metrics.json', 'r') as f:
                 model_metrics = json.load(f)
@@ -33,8 +47,28 @@ def load_resources():
 load_resources()
 
 @app.route('/')
-def index():
+def role_selection():
+    return render_template('role_selection.html')
+
+@app.route('/home')
+def home():
     return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form.get('username') == 'admin' and request.form.get('password') == 'admin123':
+            session['logged_in'] = True
+            return redirect(url_for('admin'))
+        else:
+            error = 'Invalid credentials. Master access denied.'
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('role_selection'))
 
 @app.route('/predict_page')
 def predict_page():
@@ -45,6 +79,7 @@ def dashboard():
     return render_template('dashboard.html')
 
 @app.route('/admin', methods=['GET', 'POST'])
+@login_required
 def admin():
     message = None
     error = None
@@ -57,8 +92,8 @@ def admin():
                 error = "No selected file"
             elif file:
                 try:
-                    # Save the uploaded file
-                    file.save('datasets/flood_dataset_classification.xls')
+                    # Save the uploaded file as the active training dataset
+                    file.save('datasets/active_training_data.csv')
                     
                     # Trigger retraining
                     from train_model import train_flood_model
