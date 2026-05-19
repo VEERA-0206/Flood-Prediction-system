@@ -28,16 +28,45 @@ def load_resources():
     if os.path.exists(model_path):
         model = joblib.load(model_path)
         features = joblib.load(features_path)
-        try:
-            df_full = pd.read_csv('datasets/active_training_data.csv')
-        except FileNotFoundError:
-            # Fallback if no active dataset has been uploaded yet
-            df_full = pd.read_csv('datasets/flood_dataset_classification.xls')
+
+        # Prefer an active dataset with required spatial and feature columns.
+        df_full = None
+        required_columns = set(['Latitude', 'Longitude'] + [f for f in features if f not in ['Latitude', 'Longitude']])
+
+        def load_candidate(path):
+            try:
+                df = pd.read_csv(path)
+                if required_columns.issubset(df.columns):
+                    return df
+            except Exception:
+                pass
+            return None
+
+        for candidate in [
+            'datasets/active_training_data.csv',
+            'datasets/authentic_kerala_historical_data.csv',
+            'datasets/Flood_Prediction_NCR_Philippines.csv'
+        ]:
+            df_full = load_candidate(candidate)
+            if df_full is not None:
+                break
+
+        if df_full is None:
+            # Last-resort fallback for older dataset naming conventions.
+            try:
+                legacy = pd.read_csv('datasets/flood_dataset_classification.xls')
+                if required_columns.issubset(legacy.columns):
+                    df_full = legacy
+                else:
+                    df_full = None
+            except Exception:
+                df_full = None
+
         try:
             with open('model_metrics.json', 'r') as f:
                 model_metrics = json.load(f)
-        except:
-            model_metrics = {'accuracy': 0.0, 'rows': len(df_full)}
+        except Exception:
+            model_metrics = {'accuracy': 0.0, 'rows': len(df_full) if df_full is not None else 0}
     else:
         model = None
         features = []
@@ -120,7 +149,9 @@ def admin():
 @app.route('/get_features', methods=['POST'])
 def get_features():
     if df_full is None:
-        return jsonify({'error': 'Dataset not loaded'}), 500
+        return jsonify({
+            'error': 'No compatible spatial dataset loaded. Please ensure your dataset contains Latitude, Longitude, and all required feature columns.'
+        }), 500
     
     try:
         data = request.json
