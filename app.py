@@ -7,37 +7,66 @@ import requests
 from datetime import datetime
 from train_model import train_flood_model
 
-app = Flask(__name__)
-app.secret_key = 'master_admin_secret_key_123'
+app = Flask(__name__)#create flask app
+app.secret_key = 'master_admin_secret_key_123' #Used for security
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not session.get('logged_in'):
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
+def login_required(f):#create a decorator to check if user is logged in before accessing admin page
+    @wraps(f) #Preserves original function's metadata
+    def decorated_function(*args, **kwargs): #Check if user is logged in, if not redirect to login page
+        if not session.get('logged_in'): #If user is not logged in, redirect to login page
+            return redirect(url_for('login')) #Redirect to login page if not logged in
+        return f(*args, **kwargs) #If logged in, proceed to the original function
+    return decorated_function #End of login_required decorator
 
 # Load model and features
-model_path = 'flood_model_fixed.pkl'
-features_path = 'model_features.pkl'
+model_path = 'flood_model_fixed.pkl' #Path to the trained model file
+features_path = 'model_features.pkl' #Path to the file containing the list of features used by the model
 
-def load_resources():
+def load_resources(): #Load the model, features, and dataset into memory at startup
     global model, features, df_full, model_metrics
     import json
     if os.path.exists(model_path):
-        model = joblib.load(model_path)
-        features = joblib.load(features_path)
-        try:
-            df_full = pd.read_csv('datasets/active_training_data.csv')
-        except FileNotFoundError:
-            # Fallback if no active dataset has been uploaded yet
-            df_full = pd.read_csv('datasets/flood_dataset_classification.xls')
+        model = joblib.load(model_path) #Load the trained model from the specified path
+        features = joblib.load(features_path) #Load the list of features used by the model from the specified path
+
+        # Prefer an active dataset with required spatial and feature columns.
+        df_full = None
+        required_columns = set(['Latitude', 'Longitude'] + [f for f in features if f not in ['Latitude', 'Longitude']])
+
+        def load_candidate(path):
+            try:
+                df = pd.read_csv(path) 
+                if required_columns.issubset(df.columns):
+                    return df
+            except Exception:
+                pass
+            return None
+
+        for candidate in [
+            'datasets/active_training_data.csv',
+            'datasets/authentic_kerala_historical_data.csv',
+            'datasets/Flood_Prediction_NCR_Philippines.csv'
+        ]:
+            df_full = load_candidate(candidate) #Try loading each candidate dataset and check if it contains the required columns. If it does, use it as the active dataset. This allows for flexibility in dataset management and ensures that the application has access to spatial data for feature extraction.
+            if df_full is not None:
+                break
+
+        if df_full is None:
+            # Last-resort fallback for older dataset naming conventions.
+            try:
+                legacy = pd.read_csv('datasets/flood_dataset_classification.xls')
+                if required_columns.issubset(legacy.columns):
+                    df_full = legacy
+                else:
+                    df_full = None
+            except Exception:
+                df_full = None
+
         try:
             with open('model_metrics.json', 'r') as f:
                 model_metrics = json.load(f)
-        except:
-            model_metrics = {'accuracy': 0.0, 'rows': len(df_full)}
+        except Exception:
+            model_metrics = {'accuracy': 0.0, 'rows': len(df_full) if df_full is not None else 0}
     else:
         model = None
         features = []
@@ -47,7 +76,7 @@ def load_resources():
 load_resources()
 
 @app.route('/')
-def role_selection():
+def role_selection(): 
     return render_template('role_selection.html')
 
 @app.route('/home')
@@ -120,7 +149,9 @@ def admin():
 @app.route('/get_features', methods=['POST'])
 def get_features():
     if df_full is None:
-        return jsonify({'error': 'Dataset not loaded'}), 500
+        return jsonify({
+            'error': 'No compatible spatial dataset loaded. Please ensure your dataset contains Latitude, Longitude, and all required feature columns.'
+        }), 500
     
     try:
         data = request.json
